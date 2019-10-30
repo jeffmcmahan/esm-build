@@ -95,10 +95,13 @@ The bundle of modules is then wrapped as follows:
 })();
 ```
 
-## Todo
+## Static-ness
 
-Include code that identifies undefined object properties to ensure the static nature of the import/export constructs. Basically, trap the lookup operation, and if a property is undefined or null, throw an error with a helpful message indicating which file, and which property.
+You really should only use named imports and exports, so that you don't have to worry about failing property lookups on imported namespace objects.
 
-## Thought
+```js
+import * as foo from './foo.mjs'	// Bad.
+import {foo} from './foo.mjs'		// Good.
+```
 
-Could we use a file-path+propName strategy to keep individual properties separate and validate them statically, even better than the ESModules spec requires?
+The latter case requires the importing and the exporting file to agree on what the exporting file actually exports, preventing dreaded "such and such is undefined" errors. This implementation keeps this promise; a named import without a corresponding value will trigger an immediate error.
