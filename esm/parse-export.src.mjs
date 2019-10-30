@@ -103,8 +103,10 @@ export const parseExport = (fname, src) => {
 	assert(fname.startsWith('/'))
 	assert(src.startsWith('export '))
 
-	state.exports[fname] = []
-
+	if (!(fname in state.exports)) {
+		state.exports[fname] = []
+	}
+	
 	src = src.slice(6).trim() // drop 'export' token
 
 	if (src.startsWith('const ')) {

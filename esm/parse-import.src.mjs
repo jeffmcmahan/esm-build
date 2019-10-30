@@ -71,7 +71,7 @@ export const parseImport = (fname, ln) => {
 		// import x from './y.js'
 		const [left, right] = src.split(' from ').map(s => s.trim())
 		const fpath = join(parentDir, right.slice(1, -1).trim())
-		state.imports[fpath] = []
+		state.imports[fpath] = (state.imports[fpath] || [])
 		const bindings = parseBindings(fpath, left)
 		assert(bindings.endsWith('='))
 		assert(fpath.endsWith('.js') || fpath.endsWith('.mjs'))
@@ -79,7 +79,7 @@ export const parseImport = (fname, ln) => {
 	} else {
 		// import './foo.js'
 		const fpath = join(parentDir, src.slice(1, -1).trim())
-		state.imports[fpath] = []
+		state.imports[fpath] = (state.imports[fpath] || [])
 		return `void module['${fpath}']`
 	}
 }
