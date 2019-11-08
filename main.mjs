@@ -79,7 +79,9 @@ export const bundleEsm = async ({root, deps = [], exclude = [], dest = './bundle
 			.filter(fname => !basename(fname).startsWith('.'))
 			.filter(fname => fname !== dest)
 			.filter(fname => !deps.includes(fname))
-			.filter(fname => !exclude.includes(fname))
+			.filter(fname => !exclude.some(excluded => {
+				return fname.startsWith(excluded)
+			}))
 
 		const ops = files.map(async fpath => {
 			const src = await fs.readFile(fpath, 'utf8').catch(e => {
@@ -110,7 +112,9 @@ export const bundleEsm = async ({root, deps = [], exclude = [], dest = './bundle
 		.filter(fname => !fname.includes(state.testRoot))
 		.forEach(fname => {
 			state.imports[fname].forEach(prop => {
-				if (!state.exports[fname].includes(prop)) {
+				if (!state.exports[fname]) {
+					warnings.push(`${fname} was not within root.`)
+				} else if (!state.exports[fname].includes(prop)) {
 					warnings.push(`${fname.split(root).join('')} does not export "${prop}".`)
 				}
 			})
